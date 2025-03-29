@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 
 
-def get_assistant_output(file_path):
+def get_assistant_output(prompt):
     """
     Function to get the output from the assistant based on user input.
     This function creates a thread and retrieves the response from the assistant.
@@ -22,7 +22,7 @@ def get_assistant_output(file_path):
     # print(f"Assistant ID loaded: {'Yes' if ASSISTANT_ID else 'No'}")
 
     client = OpenAI(
-    api_key=api_key
+        api_key=api_key
     )
 
     thread = client.beta.threads.create(
@@ -78,3 +78,5 @@ def main():
         prompt = reader[0]
     from_ai = get_assistant_output(prompt) # get the output from the assistant based on the prompt
     parse_assistant_output(from_ai)        # parse ai output to csv
+
+main()
