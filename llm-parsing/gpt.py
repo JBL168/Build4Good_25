@@ -1,7 +1,11 @@
 import os
 import time
+import csv
+import pandas as pd
 from openai import OpenAI
 from dotenv import load_dotenv
+
+
 
 def get_assistant_output(user_input):
     """
@@ -51,3 +55,24 @@ def get_assistant_output(user_input):
     print(f'Response: \n{latest_message.content[0].text.value}')
 
     return latest_message.content[0].text.value
+
+def parse_assistant_output(output):
+    """
+    Function to parse the assistant output and return a dictionary of values.
+    This function takes the output from the assistant and parses it into a dictionary.
+    """
+    with open(r'llm-parsing\textinput.csv') as file:
+        reader = csv.reader(file, delimiter=';')
+        data = []
+        headers=['start_date', 'end_date', 'title', 'description']
+        for row in reader:
+            data.append(row)
+        df = pd.DataFrame(data, columns=headers)
+
+    print(df.head())
+    df.to_csv(r'llm-parsing\output.csv', index=False)
+
+def main():
+    user_input = ...
+    output = get_assistant_output(user_input)
+    parse_assistant_output(output)
