@@ -10,8 +10,6 @@ const navigation = [
   { name: "Contact", href: "/contact" },
 ];
 
-
-
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
   const [startDate, setStartDate] = useState(null);
@@ -19,6 +17,7 @@ export default function Home() {
   const [purposeValue, setPurposeValue] = useState("");
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formattedOutput, setFormattedOutput] = useState("");
   const textareaRef = useRef(null);
   const purposeTextareaRef = useRef(null);
   const [startCalendarOpen, setStartCalendarOpen] = useState(false);
@@ -72,6 +71,15 @@ export default function Home() {
     }
   };
 
+  // Format date to MM-DD-YYYY
+  const formatDate = (date) => {
+    if (!date) return "";
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}-${day}-${year}`;
+  };
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -103,11 +111,33 @@ export default function Home() {
       return;
     }
     
+    // Create the formatted string
+    const formattedString = `'${formatDate(startDate)}', '${formatDate(endDate)}', '${inputValue}', '${purposeValue}'`;
+    setFormattedOutput(formattedString);
+    
+    // Save to file (this will only work in Node.js environment, not in browser)
+    // In a real Next.js app, you'd need to use an API route to save the file
+    try {
+      // Create a blob and download it as a text file
+      const blob = new Blob([formattedString], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'task_data.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error saving file:", error);
+    }
+    
     console.log({
       task: inputValue,
       startDate,
       endDate,
-      purpose: purposeValue
+      purpose: purposeValue,
+      formattedString
     });
     
     setIsSubmitted(true);
@@ -257,15 +287,37 @@ export default function Home() {
         </button>
 
         {isSubmitted && (
-          <div className="mt-8 w-4/5 flex justify-center animate-fade-in">
-            <div className="bg-white p-6 rounded-lg shadow-xl text-center">
+          <div className="mt-8 w-4/5 flex flex-col items-center justify-center animate-fade-in">
+            <div className="bg-white p-6 rounded-lg shadow-xl text-center w-full">
               <img 
                 src="/boo.png"
                 alt="Success" 
                 className="w-500 h-500 mx-500 mb-4"
               />
               <h2 className="text-2xl font-bold text-green-600 mb-2">Task Scheduled!</h2>
-              <p className="text-gray-700">Your learning journey has been scheduled successfully.</p>
+              <p className="text-gray-700 mb-4">Your learning journey has been scheduled successfully.</p>
+              
+              <div className="mt-4 p-4 bg-gray-100 rounded-md">
+                <h3 className="text-lg font-semibold mb-2">Formatted Output:</h3>
+                <p className="font-mono text-sm break-all">{formattedOutput}</p>
+              </div>
+              
+              <button 
+                onClick={() => {
+                  const blob = new Blob([formattedOutput], { type: 'text/plain' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'task_data.txt';
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                }}
+                className="mt-4 py-2 px-4 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600"
+              >
+                Download as TXT
+              </button>
             </div>
           </div>
         )}
