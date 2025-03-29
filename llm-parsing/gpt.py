@@ -96,5 +96,4 @@ def main():
     result_df = get_assistant_output(prompt)
     result_df.to_csv('data.csv', index=False)
 
-if __name__ == "__main__":
-    main()
+main()
