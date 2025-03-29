@@ -1,0 +1,7 @@
+start_date,end_date,title,description
+01-01-2025,01-31-2025,Python Basics,"Start with understanding Python syntax, variables, data types, and basic input/output operations. Learn how to write and run Python scripts, and practice simple exercises to reinforce foundational concepts."
+02-01-2025,02-28-2025,Control Flow and Data Structures,"Learn about conditionals, loops, lists, tuples, dictionaries, and sets. Practice using these constructs in small programs to manipulate data and implement logic-based workflows."
+03-01-2025,03-31-2025,Functions and Modules,"Understand how to define and use functions, pass arguments, return values, and structure code with modules. Explore Pythonâ€™s standard library and how to import third-party packages."
+04-01-2025,04-30-2025,File Handling and Error Management,"Learn how to read from and write to files, handle different file types, and use exceptions to manage errors gracefully. Apply these skills to real-world scenarios like processing logs or CSVs."
+05-01-2025,05-15-2025,Automating Tasks with Python,"Focus on automating tasks such as file organization, email sending, web scraping, and data entry using libraries like os, shutil, smtplib, requests, and BeautifulSoup."
+05-16-2025,06-01-2025,Project and Review,"Build a small automation project that applies everything learned, such as a task scheduler or data parser. Review and refine the code, document the process, and identify areas for further improvement."
