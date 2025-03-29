@@ -1,6 +1,6 @@
 start_date,end_date,title,description
-03-29-2025,04-12-2025,Introduction to ChatGPT and AI,"Learn the basics of AI and how ChatGPT works, including its architecture and capabilities. Understand the fundamental concepts of natural language processing and machine learning."
-04-13-2025,04-27-2025,Deep Dive into ChatGPT,"Explore the inner workings of ChatGPT, including its training process and how it generates responses. Study the model's strengths and limitations in conversational contexts."
-04-28-2025,05-12-2025,Building a Basic Chatbot,"Start developing a simple chatbot using ChatGPT. Focus on setting up the environment, integrating the model, and creating basic conversational flows."
-05-13-2025,05-27-2025,Enhancing Chatbot Features,"Improve the chatbot by adding features such as context retention, personality traits, and debate capabilities. Experiment with different prompts and settings to optimize performance."
-05-28-2025,06-04-2025,Testing and Deployment,Test the chatbot thoroughly to ensure it can handle debates effectively. Deploy the chatbot and gather feedback for further improvements.
+03-29-2025,04-05-2025,Introduction to AI and ChatGPT,"Learn the basics of artificial intelligence, focusing on natural language processing and the capabilities of ChatGPT. Understand how AI models like ChatGPT are structured and how they function."
+04-06-2025,04-12-2025,Understanding Chatbot Frameworks,Explore different chatbot frameworks and platforms. Learn how these frameworks can be integrated with AI models to create functional chatbots.
+04-13-2025,04-19-2025,Building a Basic Chatbot,"Start building a simple chatbot using ChatGPT. Focus on setting up the environment, integrating ChatGPT, and creating basic conversational flows."
+04-20-2025,04-26-2025,Enhancing Chatbot Functionality,Improve your chatbot by adding more complex conversational abilities and handling various user inputs. Learn about context management and response generation.
+04-27-2025,05-04-2025,Testing and Deployment,Test your chatbot for performance and user interaction. Learn about deploying your chatbot on different platforms and ensuring it runs smoothly in a production environment.
