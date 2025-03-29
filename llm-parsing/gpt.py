@@ -7,7 +7,11 @@ from dotenv import load_dotenv
 
 
 
-def get_assistant_output(user_input):
+def get_assistant_output(file_path):
+    with open(file_path, 'r') as file:
+        reader = csv.reader(file)
+        prompt = reader[0]
+
     """
     Function to get the output from the assistant based on user input.
     This function creates a thread and retrieves the response from the assistant.
@@ -29,7 +33,7 @@ def get_assistant_output(user_input):
         messages=[
             {
                 'role': 'user',
-                'content': r"['01-01-2025', '06-01-2025', 'learn Python', 'to automate tasks at work']"
+                'content': f'{prompt}'
             }
         ]
     )
