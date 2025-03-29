@@ -79,9 +79,9 @@ export default function Home() {
       
       // Create CSV row
       const csvData = {
-        task: data.task,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
+        task: data.task,
         purpose: data.purpose
       };
       
@@ -95,7 +95,7 @@ export default function Home() {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to save data');
+        throw new Error('Ffailed to save data');
       }
       
       return await response.json();
@@ -137,22 +137,49 @@ export default function Home() {
     }
     
     const formData = {
-      task: inputValue,
       startDate,
+      task: inputValue,
       endDate,
       purpose: purposeValue
     };
     
     console.log(formData);
-    
-    try {
-      await saveToCSV(formData);
-      setIsSubmitted(true);
-      alert("Task scheduled successfully and saved to CSV!");
-    } catch (error) {
-      alert("Error saving task: " + error.message);
+  
+  try {
+    // Call the API endpoint that handles both CSV and Python
+    const response = await fetch('/api/save-csv', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        startDate: formData.startDate ? formData.startDate.toLocaleDateString() : '',
+        endDate: formData.endDate ? formData.endDate.toLocaleDateString() : '',
+        task: formData.task,
+        purpose: formData.purpose
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to process request');
     }
-  };
+
+    if (result.csvSuccess && result.pythonSuccess) {
+      setIsSubmitted(true);
+      console.log('Python output:', result.pythonOutput);
+    } else if (result.csvSuccess) {
+      throw new Error('CSV saved but Python script failed');
+    } else {
+      throw new Error('Failed to save CSV');
+    }
+
+  } catch (error) {
+    console.error('Error:', error);
+    alert(`Error processing task: ${error.message}`);
+  }
+};
 
   // Initial resize and resize on value change
   useEffect(() => {
@@ -200,7 +227,7 @@ export default function Home() {
         </h1>
         
         <div className="w-4/5 mb-2">
-          <p className="text-white text-xl font-display mb-2 text-center">Task Description:</p>
+          <p className="text-white text-xl font-display mb-2 text-center">What do you want to learn?:</p>
         </div>
         
         <textarea
@@ -208,7 +235,7 @@ export default function Home() {
           value={inputValue}
           onChange={handleInputChange}
           className={`py-2 px-4 z-10 text-xl text-center text-black bg-[#f5f5f0] cursor-default font-display sm:text-lg md:text-xl whitespace-nowrap resize-none overflow-hidden rounded-md ${formErrors.task ? 'border-2 border-red-500' : ''}`}
-          placeholder="Enter task description..."
+          placeholder="Enter..."
           style={{ minHeight: "50px", width: "80%" }}
           rows={1}
           required
@@ -226,7 +253,7 @@ export default function Home() {
           value={purposeValue}
           onChange={handlePurposeChange}
           className={`py-2 px-4 z-10 text-xl text-center text-black bg-[#f5f5f0] cursor-default font-display sm:text-lg md:text-xl resize-none overflow-hidden rounded-md ${formErrors.purpose ? 'border-2 border-red-500' : ''}`}
-          placeholder="Explain why you want to learn this topic or what you're learning it for..."
+          placeholder="Enter..."
           style={{ minHeight: "80px", width: "80%", marginBottom: "30px" }}
           rows={2}
           required
@@ -296,13 +323,9 @@ export default function Home() {
         </button>
 
         {isSubmitted && (
-          <div className="mt-8 w-4/5 flex justify-center animate-fade-in">
+          <div className="mt-8 flex justify-center animate-fade-in">
             <div className="bg-white p-6 rounded-lg shadow-xl text-center">
-              <img 
-                src="/boo.png"
-                alt="Success" 
-                className="w-500 h-500 mx-500 mb-4"
-              />
+            <iframe src="https://loud-sapphire-b9b.notion.site/ebd/1c543457654c80b9a372ff8d4c7ae2f4" width="1000" height="900" frameborder="0" allowfullscreen />
               <h2 className="text-2xl font-bold text-green-600 mb-2">Task Scheduled!</h2>
               <p className="text-gray-700">Your learning journey has been scheduled successfully.</p>
             </div>
