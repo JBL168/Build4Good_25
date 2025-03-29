@@ -1,0 +1,53 @@
+import os
+import time
+from openai import OpenAI
+from dotenv import load_dotenv
+
+def get_assistant_output(user_input):
+    """
+    Function to get the output from the assistant based on user input.
+    This function creates a thread and retrieves the response from the assistant.
+    """
+    if not load_dotenv(dotenv_path='llm-parsing\keys.env'):
+        raise EnvironmentError('Could not load .env file')
+
+    api_key=os.getenv('OPENAI_API_KEY')
+    ASSISTANT_ID=os.getenv('ASSISTANT_ID')
+
+    # print(f"API Key loaded: {'Yes' if api_key else 'No'}")
+    # print(f"Assistant ID loaded: {'Yes' if ASSISTANT_ID else 'No'}")
+
+    client = OpenAI(
+    api_key=api_key
+    )
+
+    thread = client.beta.threads.create(
+        messages=[
+            {
+                'role': 'user',
+                'content': r"['01-01-2025', '06-01-2025', 'learn Python', 'to automate tasks at work']"
+            }
+        ]
+    )
+
+    run = client.beta.threads.runs.create(thread_id=thread.id, assistant_id=ASSISTANT_ID)
+    print(f"Thread ID: {run.id}")
+
+    while run.status != 'completed':
+        run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+        print(f"Run Status: {run.status}")
+        time.sleep(1)
+        if run.status == 'failed':
+            print("Run failed:", run.error)
+            break
+    else:
+        print("Run completed successfully.")
+
+    message_response = client.beta.threads.messages.list(thread_id=thread.id)
+    messages = message_response.data
+
+    latest_message = messages[0] if messages else None
+
+    print(f'Response: \n{latest_message.content[0].text.value}')
+
+    return latest_message.content[0].text.value
