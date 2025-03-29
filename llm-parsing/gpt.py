@@ -91,7 +91,9 @@ def get_assistant_output(prompt):
 def main():
     with open('output.csv', 'r') as file:
         reader = csv.reader(file)
+        header = next(reader)
         prompt = next(reader)
+
         
     result_df = get_assistant_output(prompt)
     result_df.to_csv('data.csv', index=False)
