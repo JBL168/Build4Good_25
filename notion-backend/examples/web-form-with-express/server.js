@@ -37,6 +37,12 @@ app.post("/databases", async function (request, response) {
         Name: {
           title: {},
         },
+        "End date": {
+          date: {},
+        },
+        "Start date": {
+          date: {},
+        }
       },
     })
     response.json({ message: "success!", data: newDb })

@@ -16,6 +16,8 @@ const pageResponseEl = document.getElementById("pageResponse")
 const blocksResponseEl = document.getElementById("blocksResponse")
 const commentResponseEl = document.getElementById("commentResponse")
 
+var dbdata = null
+
 /**
  * Functions to handle appending new content to /views/index.html
  */
@@ -65,10 +67,10 @@ const appendBlocksResponse = function (apiResponse, el) {
  */
 
 // Attach submit event to each form
-dbForm.onsubmit = async function (event) {
+dbForm.onsubmit = async function (event) { // need to update the trigger
   event.preventDefault()
 
-  const dbName = event.target.dbName.value
+  const dbName = "Timeline"
   const body = JSON.stringify({ dbName })
 
   const newDBResponse = await fetch("/databases", {
@@ -81,12 +83,13 @@ dbForm.onsubmit = async function (event) {
   const newDBData = await newDBResponse.json()
 
   appendApiResponse(newDBData, dbResponseEl)
+  dbdata = newDBData.data
 }
 
 pageForm.onsubmit = async function (event) {
   event.preventDefault()
 
-  const dbID = event.target.newPageDB.value
+  const dbID = dbdata.id
   const pageName = event.target.newPageName.value
   const header = event.target.header.value
   const body = JSON.stringify({ dbID, pageName, header })
