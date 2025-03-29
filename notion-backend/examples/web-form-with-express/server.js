@@ -15,35 +15,77 @@ app.get("/", function (request, response) {
 })
 
 // Create new database. The page ID is set in the environment variables.
+const fs = require("fs");
+const csv = require("csv-parser");
+
 app.post("/databases", async function (request, response) {
-  const pageId = process.env.NOTION_PAGE_ID
-  const title = request.body.dbName
+  const pageId = process.env.NOTION_PAGE_ID;
+  const title = request.body.dbName;
 
   try {
+    // Create a new Notion database
     const newDb = await notion.databases.create({
       parent: {
         type: "page_id",
         page_id: pageId,
       },
-      title: [
-        {
-          type: "text",
-          text: {
-            content: title,
-          },
-        },
-      ],
+      title: [{ type: "text", text: { content: title } }],
       properties: {
-        Name: {
-          title: {},
-        },
+        Name: { title: {} },
+        "Start date": { date: {} },
+        "End date": { date: {} },
+        Description: { rich_text: {} },
       },
-    })
-    response.json({ message: "success!", data: newDb })
+    });
+
+    const dbID = newDb.id;
+
+    // Read and parse the CSV file
+    const pages = [];
+    fs.createReadStream("data.csv")
+        .pipe(csv())
+        .on("data", (row) => {
+          pages.push({
+            Name: row.title,
+            "Start date": row.start_date,
+            "End date": row.end_date,
+            Description: row.description,
+          });
+        })
+        .on("end", async () => {
+          for (const page of pages) {
+            await notion.pages.create({
+              parent: { database_id: dbID },
+              properties: {
+                Name: {
+                  title: [{ text: { content: page.Name } }],
+                },
+                "Start date": {
+                  date: { start: formatDate(page["Start date"]) },
+                },
+                "End date": {
+                  date: { start: formatDate(page["End date"]) },
+                },
+                Description: {
+                  rich_text: [{ text: { content: page.Description } }],
+                },
+              },
+            });
+          }
+          response.json({ message: "success!", data: newDb });
+        });
   } catch (error) {
-    response.json({ message: "error", error })
+    response.json({ message: "error", error });
   }
-})
+});
+
+// Function to format date (MM-DD-YYYY -> YYYY-MM-DD)
+function formatDate(dateString) {
+  const [month, day, year] = dateString.split("-");
+  return `${year}-${month}-${day}`;
+}
+
+
 
 // Create new page. The database ID is provided in the web form.
 app.post("/pages", async function (request, response) {
