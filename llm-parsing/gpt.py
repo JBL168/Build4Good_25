@@ -8,10 +8,6 @@ from dotenv import load_dotenv
 
 
 def get_assistant_output(file_path):
-    with open(file_path, 'r') as file:
-        reader = csv.reader(file)
-        prompt = reader[0]
-
     """
     Function to get the output from the assistant based on user input.
     This function creates a thread and retrieves the response from the assistant.
@@ -65,7 +61,7 @@ def parse_assistant_output(output):
     Function to parse the assistant output and return a dictionary of values.
     This function takes the output from the assistant and parses it into a dictionary.
     """
-    with open(r'llm-parsing\textinput.csv') as file:
+    with open(r'llm-parsing\output.csv') as file:
         reader = csv.reader(file, delimiter=';')
         data = []
         headers=['start_date', 'end_date', 'title', 'description']
@@ -74,9 +70,11 @@ def parse_assistant_output(output):
         df = pd.DataFrame(data, columns=headers)
 
     print(df.head())
-    df.to_csv(r'llm-parsing\output.csv', index=False)
+    df.to_csv(r'\data.csv', index=False)
 
 def main():
-    user_input = ...
-    output = get_assistant_output(user_input)
-    parse_assistant_output(output)
+    with open('output.csv', 'r') as file:
+        reader = csv.reader(file)
+        prompt = reader[0]
+    from_ai = get_assistant_output(prompt) # get the output from the assistant based on the prompt
+    parse_assistant_output(from_ai)        # parse ai output to csv
