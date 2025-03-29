@@ -10,6 +10,8 @@ const navigation = [
   { name: "Contact", href: "/contact" },
 ];
 
+
+
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
   const [startDate, setStartDate] = useState(null);
@@ -70,43 +72,8 @@ export default function Home() {
     }
   };
 
-  // Function to save data to CSV file
-  const saveToCSV = async (data) => {
-    try {
-      // Format the data for CSV
-      const formattedStartDate = data.startDate ? data.startDate.toLocaleDateString() : '';
-      const formattedEndDate = data.endDate ? data.endDate.toLocaleDateString() : '';
-      
-      // Create CSV row
-      const csvData = {
-        task: data.task,
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-        purpose: data.purpose
-      };
-      
-      // Make API call to save CSV data
-      const response = await fetch('/api/save-csv', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(csvData),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to save data');
-      }
-      
-      return await response.json();
-    } catch (error) {
-      console.error('Error saving to CSV:', error);
-      throw error;
-    }
-  };
-
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     
     const errors = {};
@@ -136,22 +103,16 @@ export default function Home() {
       return;
     }
     
-    const formData = {
+    console.log({
       task: inputValue,
       startDate,
       endDate,
       purpose: purposeValue
-    };
+    });
     
-    console.log(formData);
+    setIsSubmitted(true);
     
-    try {
-      await saveToCSV(formData);
-      setIsSubmitted(true);
-      alert("Task scheduled successfully and saved to CSV!");
-    } catch (error) {
-      alert("Error saving task: " + error.message);
-    }
+    alert("Task scheduled successfully!");
   };
 
   // Initial resize and resize on value change
