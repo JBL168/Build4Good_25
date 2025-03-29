@@ -88,14 +88,28 @@ def get_assistant_output(prompt):
 #     print(df.head())
 #     df.to_csv(r'data.csv', index=False)
 
-def main():
-    with open('output.csv', 'r') as file:
-        reader = csv.reader(file)
-        header = next(reader)
-        prompt = next(reader)
+import json
 
-        
-    result_df = get_assistant_output(prompt)
-    result_df.to_csv('data.csv', index=False)
+def main():
+    try:
+        with open('output.csv', 'r') as file:
+            reader = csv.reader(file)
+            prompt = next(reader)
+            
+        result_df = get_assistant_output(prompt)
+        if result_df is not None:
+            result_df.to_csv('data.csv', index=False)
+            print(json.dumps({
+                "success": True,
+                "message": "CSV processing completed successfully"
+            }))
+            return True
+        return False
+    except Exception as e:
+        print(json.dumps({
+            "success": False,
+            "error": str(e)
+        }))
+        return False
 
 main()
