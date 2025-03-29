@@ -4,8 +4,6 @@ import csv
 import pandas as pd
 import csv
 
-
-
 def parse_assistant_output(output):
     """
     Function to parse the assistant output and return a dictionary of values.

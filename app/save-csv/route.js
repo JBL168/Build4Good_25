@@ -15,6 +15,13 @@ export async function POST(request) {
     const row = `"${data.startDate}","${data.endDate}","${data.task.replace(/"/g, '""')}","${data.purpose.replace(/"/g, '""')}"\n`;
     await fsPromises.writeFile(csvFilePath,row);
 
+    // Write headers if file doesn't exist
+    try {
+      await fsPromises.access(csvFilePath);
+    } catch {
+      await fsPromises.writeFile(csvFilePath, headers);
+    }
+
     // 2. Execute python script
     const pythonScript = 'llm-parsing/gpt.py';
     const { stdout, stderr } = await execAsync(`python "${pythonScript}"`);
