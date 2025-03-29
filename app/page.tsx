@@ -79,9 +79,9 @@ export default function Home() {
       
       // Create CSV row
       const csvData = {
-        task: data.task,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
+        task: data.task,
         purpose: data.purpose
       };
       
@@ -137,8 +137,8 @@ export default function Home() {
     }
     
     const formData = {
-      task: inputValue,
       startDate,
+      task: inputValue,
       endDate,
       purpose: purposeValue
     };

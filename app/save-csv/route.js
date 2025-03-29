@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 
@@ -10,30 +9,15 @@ export async function POST(request) {
     // Define the CSV file path
     const csvFilePath = path.join(process.cwd(), 'output.csv');
     
-    // Check if file exists to determine if we need to add headers
-    let fileExists = false;
-    try {
-      await fsPromises.access(csvFilePath);
-      fileExists = true;
-    } catch (error) {
-      // File doesn't exist, we'll create it
-    }
-    
     // Format the data as a CSV row
-    const headers = 'task,startDate,endDate,purpose\n';
-    const row = `"${data.task.replace(/"/g, '""')}","${data.startDate}","${data.endDate}","${data.purpose.replace(/"/g, '""')}"\n`;
     
-    // Write to the file (create or append)
-    if (!fileExists) {
-      // Create new file with headers
-      await fsPromises.writeFile(csvFilePath, headers + row);
-    } else {
-      // Append to existing file
-      await fsPromises.appendFile(csvFilePath, row);
-    }
+    const row = `"${data.startDate}","${data.endDate}","${data.task.replace(/"/g, '""')}","${data.purpose.replace(/"/g, '""')}"\n`;
+    
+    // Always create a new file with headers (wiping any existing content)
+    await fsPromises.writeFile(csvFilePath,row);
     
     // Return success response
-    return NextResponse.json({ success: true, message: 'Data saved to CSV' });
+    return NextResponse.json({ success: true, message: 'Data saved to CSV (file was reset)' });
   } catch (error) {
     console.error('Error saving CSV data:', error);
     return NextResponse.json(
