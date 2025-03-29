@@ -21,7 +21,7 @@ export default function Home() {
   const purposeTextareaRef = useRef(null);
   const [startCalendarOpen, setStartCalendarOpen] = useState(false);
   const [endCalendarOpen, setEndCalendarOpen] = useState(false);
-
+  
   // Auto-resize function
   const autoResize = (textareaRef) => {
     const textarea = textareaRef.current;
