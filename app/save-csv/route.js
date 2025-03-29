@@ -1,27 +1,50 @@
 import { NextResponse } from 'next/server';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 export async function POST(request) {
   try {
     const data = await request.json();
     
-    // Define the CSV file path
+    // 1. Save to CSV file
     const csvFilePath = path.join(process.cwd(), 'output.csv');
-    
-    // Format the data as a CSV row
-    
     const row = `"${data.startDate}","${data.endDate}","${data.task.replace(/"/g, '""')}","${data.purpose.replace(/"/g, '""')}"\n`;
-    
-    // Always create a new file with headers (wiping any existing content)
     await fsPromises.writeFile(csvFilePath,row);
+
+    // 2. Execute python script
+    const pythonScript = 'llm-parsing/gpt.py';
+    const { stdout, stderr } = await execAsync(`python "${pythonScript}"`);
     
+    if (stderr) {
+      console.error('Python script error:', stderr);
+      return NextResponse.json({ 
+        csvSuccess: true,
+        pythonSuccess: false,
+        error: stderr 
+      }, { status: 500 });
+    }
+
+
     // Return success response
-    return NextResponse.json({ success: true, message: 'Data saved to CSV (file was reset)' });
+    return NextResponse.json({ 
+      csvSuccess: true,
+      pythonSuccess: true,
+      pythonOutput: stdout,
+      message: 'Data saved and Python script executed successfully'
+    });
   } catch (error) {
-    console.error('Error saving CSV data:', error);
+    console.error('Operation failed:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to save data', error: error.message },
+      { 
+        csvSuccess: false,
+        pythonSuccess: false,
+        message: 'Operation failed', 
+        error: error.message 
+      },
       { status: 500 }
     );
   }

@@ -95,7 +95,7 @@ export default function Home() {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to save data');
+        throw new Error('Ffailed to save data');
       }
       
       return await response.json();
@@ -144,15 +144,42 @@ export default function Home() {
     };
     
     console.log(formData);
-    
-    try {
-      await saveToCSV(formData);
-      setIsSubmitted(true);
-      alert("Task scheduled successfully and saved to CSV!");
-    } catch (error) {
-      alert("Error saving task: " + error.message);
+  
+  try {
+    // Call the API endpoint that handles both CSV and Python
+    const response = await fetch('/api/save-csv', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        startDate: formData.startDate ? formData.startDate.toLocaleDateString() : '',
+        endDate: formData.endDate ? formData.endDate.toLocaleDateString() : '',
+        task: formData.task,
+        purpose: formData.purpose
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to process request');
     }
-  };
+
+    if (result.csvSuccess && result.pythonSuccess) {
+      setIsSubmitted(true);
+      console.log('Python output:', result.pythonOutput);
+    } else if (result.csvSuccess) {
+      throw new Error('CSV saved but Python script failed');
+    } else {
+      throw new Error('Failed to save CSV');
+    }
+
+  } catch (error) {
+    console.error('Error:', error);
+    alert(`Error processing task: ${error.message}`);
+  }
+};
 
   // Initial resize and resize on value change
   useEffect(() => {
